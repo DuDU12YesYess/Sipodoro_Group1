@@ -11,9 +11,7 @@ const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
-/* ==========================
-   GLOBAL MIDDLEWARE
-========================== */
+//GLOBAL MIDDLEWARE
 
 // Security headers
 app.use(helmet());
@@ -33,9 +31,7 @@ app.use(express.json());
 // Parse Form Data
 app.use(express.urlencoded({ extended: true }));
 
-/* ==========================
-   HOME ROUTE
-========================== */
+//   HOME ROUTE
 
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -45,15 +41,11 @@ app.get("/", (req, res) => {
   });
 });
 
-/* ==========================
-   API ROUTES
-========================== */
+//   API ROUTES
 
 app.use("/api", routes);
 
-/* ==========================
-   404 NOT FOUND
-========================== */
+//   404 NOT FOUND
 
 app.use((req, res) => {
   res.status(404).json({
@@ -63,9 +55,7 @@ app.use((req, res) => {
   });
 });
 
-/* ==========================
-   GLOBAL ERROR HANDLER
-========================== */
+//   GLOBAL ERROR HANDLER
 
 app.use(errorHandler);
 
