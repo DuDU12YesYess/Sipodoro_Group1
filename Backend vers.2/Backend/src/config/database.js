@@ -15,9 +15,12 @@ const sequelize = new Sequelize(
         require: true,
         rejectUnauthorized: false
       },
-      connectTimeout: 30000 // 30 seconds
+      connectTimeout: 30000 //30s
     }
   }
 );
 
 module.exports = sequelize;
+// ==========================================
+// DO NOT TOUCH THIS PLSSSSSS
+// ==========================================
