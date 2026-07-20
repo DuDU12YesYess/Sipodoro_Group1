@@ -1,0 +1,441 @@
+﻿{
+  "info": {
+    "name": "Sipodoro Backend API",
+    "description": "API documentation for the Sipodoro backend (Group 1 Final Project). Base path for all resource routes is /api. Most routes require a Bearer JWT obtained from /api/auth/login.\n\nHow to use:\n1. Set the `baseUrl` variable (defaults to http://localhost:5000).\n2. Run 'Auth > Register' once, then 'Auth > Login'. Login automatically saves the returned token to the `token` collection variable.\n3. All other requests use {{token}} automatically via collection-level Bearer auth.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "taskId", "value": "1", "type": "string" },
+    { "key": "cycleId", "value": "1", "type": "string" },
+    { "key": "flowerId", "value": "1", "type": "string" },
+    { "key": "seedId", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "API Root / Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] },
+            "description": "Confirms the server is running. Returns { message: 'Sipodoro backend running!' }"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Public registration/login plus protected profile/logout. Base path: /api/auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser1\",\n  \"email\": \"testuser1@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] },
+            "description": "Creates a new user (username, email, password required). Assigns role 'admin' only if email is admin@sipodoro.com, otherwise 'user'. Also auto-creates wallet, garden, and streak records for the user."
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    if (data.token) {",
+                  "        pm.collectionVariables.set('token', data.token);",
+                  "        console.log('Token saved to collection variable.');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser1@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "description": "Accepts email OR username in the 'email' field plus password. Returns a JWT (expires in 1 day). Test script auto-saves the token."
+          }
+        },
+        {
+          "name": "Get Profile (from token)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/auth/profile", "host": ["{{baseUrl}}"], "path": ["api", "auth", "profile"] },
+            "description": "Requires Bearer token. Returns the decoded user info attached by the auth middleware."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api", "auth", "logout"] },
+            "description": "Requires Bearer token. Client-side token invalidation only (no server-side blacklist)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "Base path: /api/users. All routes require Bearer token.",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/users/profile", "host": ["{{baseUrl}}"], "path": ["api", "users", "profile"] }
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newUsername\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/users/profile", "host": ["{{baseUrl}}"], "path": ["api", "users", "profile"] },
+            "description": "Body is passed straight through to the service layer; send any updatable User fields (e.g. username)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "description": "Base path: /api/tasks. Full CRUD, all routes require Bearer token.",
+      "item": [
+        {
+          "name": "Get All Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/tasks", "host": ["{{baseUrl}}"], "path": ["api", "tasks"] }
+          }
+        },
+        {
+          "name": "Get Task By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/tasks/{{taskId}}", "host": ["{{baseUrl}}"], "path": ["api", "tasks", "{{taskId}}"] }
+          }
+        },
+        {
+          "name": "Create Task",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Finish backend documentation\",\n  \"deadline\": \"2026-07-25T18:00:00.000Z\",\n  \"status\": \"Urgent\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/tasks", "host": ["{{baseUrl}}"], "path": ["api", "tasks"] },
+            "description": "status enum: Urgent | Critical | Low Critical"
+          }
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Finish backend documentation (updated)\",\n  \"completed\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/tasks/{{taskId}}", "host": ["{{baseUrl}}"], "path": ["api", "tasks", "{{taskId}}"] }
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/tasks/{{taskId}}", "host": ["{{baseUrl}}"], "path": ["api", "tasks", "{{taskId}}"] },
+            "description": "Returns 204 No Content on success."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pomodoro",
+      "description": "Base path: /api/pomodoro. All routes require Bearer token.",
+      "item": [
+        {
+          "name": "Start Cycle",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"focus_duration\": 25,\n  \"break_duration\": 5\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/pomodoro/start", "host": ["{{baseUrl}}"], "path": ["api", "pomodoro", "start"] }
+          }
+        },
+        {
+          "name": "Save Session",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duration\": 25,\n  \"mode\": \"focus\",\n  \"date\": \"2026-07-17\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/pomodoro/save", "host": ["{{baseUrl}}"], "path": ["api", "pomodoro", "save"] }
+          }
+        },
+        {
+          "name": "Complete Focus Session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/pomodoro/focus-complete/{{cycleId}}", "host": ["{{baseUrl}}"], "path": ["api", "pomodoro", "focus-complete", "{{cycleId}}"] }
+          }
+        },
+        {
+          "name": "Complete Break",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/pomodoro/break-complete/{{cycleId}}", "host": ["{{baseUrl}}"], "path": ["api", "pomodoro", "break-complete", "{{cycleId}}"] }
+          }
+        },
+        {
+          "name": "Get History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/pomodoro/history", "host": ["{{baseUrl}}"], "path": ["api", "pomodoro", "history"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hydration",
+      "description": "Base path: /api/hydration. All routes require Bearer token.",
+      "item": [
+        {
+          "name": "Check In",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/hydration/check-in", "host": ["{{baseUrl}}"], "path": ["api", "hydration", "check-in"] }
+          }
+        },
+        {
+          "name": "Get History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/hydration/history", "host": ["{{baseUrl}}"], "path": ["api", "hydration", "history"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Coins",
+      "description": "Base path: /api/coins. All routes require Bearer token.",
+      "item": [
+        {
+          "name": "Get Wallet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/coins/wallet", "host": ["{{baseUrl}}"], "path": ["api", "coins", "wallet"] }
+          }
+        },
+        {
+          "name": "Get Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/coins/transactions", "host": ["{{baseUrl}}"], "path": ["api", "coins", "transactions"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Flowers",
+      "description": "Base path: /api/flowers. All routes require Bearer token.",
+      "item": [
+        {
+          "name": "Get Current Flower",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/flowers/current", "host": ["{{baseUrl}}"], "path": ["api", "flowers", "current"] }
+          }
+        },
+        {
+          "name": "Plant Seed",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seed_id\": {{seedId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/flowers/plant", "host": ["{{baseUrl}}"], "path": ["api", "flowers", "plant"] }
+          }
+        },
+        {
+          "name": "Store Flower In Inventory",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/flowers/store", "host": ["{{baseUrl}}"], "path": ["api", "flowers", "store"] }
+          }
+        },
+        {
+          "name": "Delete Flower",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/flowers/{{flowerId}}", "host": ["{{baseUrl}}"], "path": ["api", "flowers", "{{flowerId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Garden",
+      "description": "Base path: /api/garden. All routes require Bearer token.",
+      "item": [
+        {
+          "name": "Get Garden",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/garden", "host": ["{{baseUrl}}"], "path": ["api", "garden"] }
+          }
+        },
+        {
+          "name": "Add Flower To Garden",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/garden/add", "host": ["{{baseUrl}}"], "path": ["api", "garden", "add"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shop",
+      "description": "Base path: /api/shop. All routes require Bearer token.",
+      "item": [
+        {
+          "name": "Buy Seed",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedId\": {{seedId}},\n  \"quantity\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/shop/buy", "host": ["{{baseUrl}}"], "path": ["api", "shop", "buy"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seed Inventory",
+      "description": "Base path: /api/inventory. All routes require Bearer token.",
+      "item": [
+        {
+          "name": "Get My Inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/inventory", "host": ["{{baseUrl}}"], "path": ["api", "inventory"] }
+          }
+        },
+        {
+          "name": "Get Seed From Inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/inventory/{{seedId}}", "host": ["{{baseUrl}}"], "path": ["api", "inventory", "{{seedId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Streak",
+      "description": "Base path: /api/streak. Requires Bearer token.",
+      "item": [
+        {
+          "name": "Get Streak",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/streak", "host": ["{{baseUrl}}"], "path": ["api", "streak"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "description": "Base path: /api/admin. Requires Bearer token AND role='admin' (log in with admin@sipodoro.com to get admin role).",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users"] }
+          }
+        },
+        {
+          "name": "Get All Hydration Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/admin/hydration-logs", "host": ["{{baseUrl}}"], "path": ["api", "admin", "hydration-logs"] }
+          }
+        },
+        {
+          "name": "Get All Seeds",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/admin/seeds", "host": ["{{baseUrl}}"], "path": ["api", "admin", "seeds"] }
+          }
+        },
+        {
+          "name": "Get All Gardens",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/admin/gardens", "host": ["{{baseUrl}}"], "path": ["api", "admin", "gardens"] }
+          }
+        }
+      ]
+    }
+  ]
+}

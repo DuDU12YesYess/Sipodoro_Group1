@@ -3,7 +3,7 @@ const coinService = require("./coinService")
 const flowerService = require("./flowerService")
 const flowerRepository = require("../repository/flowerRepository")
 
-const HYDRATION_COOLDOWN = 1;
+const HYDRATION_COOLDOWN = 3; // <-------------- for demo change from 1m to 3s
 const DEFAULT_SEED_ID = 5;
 
 const ensureFlower = async (userId) => {
@@ -36,16 +36,16 @@ const checkInWater = async (userId)=>{
 
   const now = new Date();
   const lastCheckIn = new Date(latestLog.check_in_time);
-  const minutes = (now - lastCheckIn) / (1000 * 60);
+  // const minutes = (now - lastCheckIn) / (1000 * 60); 
+  const seconds = (now - lastCheckIn) / 1000; //<----------- change from minutes to seconds
 
-  if (minutes < HYDRATION_COOLDOWN) {
+  if (seconds < HYDRATION_COOLDOWN) {  //<----------- change from minutes to seconds
     throw new Error(
         `Please wait ${
-            Math.ceil(HYDRATION_COOLDOWN - minutes)
-        } more minute.`
+            Math.ceil(HYDRATION_COOLDOWN - seconds)
+        } more second(s).`
     );
   }
-
   const log = await hydrationRepository.createLog({
     user_id: userId,
     check_in_time : now

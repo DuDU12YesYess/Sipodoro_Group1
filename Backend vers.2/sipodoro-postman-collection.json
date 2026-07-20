@@ -1,0 +1,1078 @@
+{
+  "info": {
+    "name": "Sipodoro API",
+    "description": "API Documentation for Sipodoro — a Pomodoro-based productivity app with gamification (coins, flowers, garden, streaks) and hydration tracking.\n\n## Authentication\n- Most endpoints require a JWT token in the `Authorization` header: `Bearer {{auth_token}}`\n- To get a token, use the **Login** or **Register** endpoint\n- The token expires in 1 day\n\n## Base URL\n- Default: `http://localhost:5000`\n- You can change the `base_url` variable for different environments\n\n## Environment Variables\n| Variable | Description | Default |\n|---|---|---|\n| `base_url` | Base URL of the API | `http://localhost:5000` |\n| `auth_token` | JWT token (set after login) | *(empty)* |",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "GET /",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Root health check endpoint. Returns a confirmation that the backend is running."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": \"Sipodoro backend running!\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Root health check endpoint."
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /api/auth/register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"securePassword123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new user account.\n\n**Notes:**\n- `username` must be unique\n- `email` must be unique; if set to `admin@sipodoro.com`, role becomes `admin`\n- On success, also creates a CoinWallet, Garden, and Streak record for the user"
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": \"User registered successfully\",\n  \"user\": {\n    \"user_id\": 1,\n    \"username\": \"johndoe\",\n    \"email\": \"johndoe@example.com\",\n    \"role\": \"user\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/auth/login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"securePassword123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login with email or username and password. Returns a JWT token.\n\n**Note:** The `email` field accepts either an email address OR a username.\n\n**After login:** Copy the `token` value from the response and set it as the `auth_token` environment variable in Postman."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIs...\",\n  \"user\": {\n    \"user_id\": 1,\n    \"username\": \"johndoe\",\n    \"email\": \"johndoe@example.com\",\n    \"role\": \"user\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/auth/profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            },
+            "description": "Get the authenticated user's profile information (from the JWT token)."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"success\": true,\n  \"user\": {\n    \"user_id\": 1,\n    \"username\": \"johndoe\",\n    \"email\": \"johndoe@example.com\",\n    \"role\": \"user\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/auth/logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Logout the current user. Note: This is a client-side logout — the server does not invalidate the token. Simply delete the token on the client side."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Logged out successfully\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Authentication endpoints — register, login, profile, and logout."
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET /api/users/profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "profile"]
+            },
+            "description": "Get the full user profile from the database (includes created_at, etc.)."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"user_id\": 1,\n  \"username\": \"johndoe\",\n  \"email\": \"johndoe@example.com\",\n  \"role\": \"user\",\n  \"created_at\": \"2025-01-01T00:00:00.000Z\",\n  \"updated_at\": \"2025-01-01T00:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /api/users/profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newusername\",\n  \"email\": \"newemail@example.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "profile"]
+            },
+            "description": "Update the authenticated user's profile (username and/or email). Both fields must be unique among other users."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"user_id\": 1,\n  \"username\": \"newusername\",\n  \"email\": \"newemail@example.com\",\n  \"role\": \"user\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "User profile management endpoints."
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "GET /api/tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", ""]
+            },
+            "description": "Get all tasks for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"task_id\": 1,\n    \"user_id\": 1,\n    \"title\": \"Finish project report\",\n    \"deadline\": \"2025-06-15T00:00:00.000Z\",\n    \"status\": \"Urgent\",\n    \"completed\": false,\n    \"created_at\": \"2025-01-01T00:00:00.000Z\",\n    \"updated_at\": \"2025-01-01T00:00:00.000Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/tasks/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", "1"],
+              "variable": [
+                { "key": "id", "value": "1", "description": "Task ID" }
+              ]
+            },
+            "description": "Get a single task by its ID."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"task_id\": 1,\n  \"user_id\": 1,\n  \"title\": \"Finish project report\",\n  \"deadline\": \"2025-06-15T00:00:00.000Z\",\n  \"status\": \"Urgent\",\n  \"completed\": false,\n  \"created_at\": \"2025-01-01T00:00:00.000Z\",\n  \"updated_at\": \"2025-01-01T00:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/tasks",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Finish project report\",\n  \"deadline\": \"2025-06-15\",\n  \"status\": \"Urgent\",\n  \"completed\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", ""]
+            },
+            "description": "Create a new task.\n\n**Fields:**\n- `title` (required) — Task title\n- `deadline` (required) — Task deadline date\n- `status` — One of: `Urgent`, `Critical`, `Low Critical` (default: `Urgent`)\n- `completed` — Boolean (default: `false`)"
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"task_id\": 1,\n  \"user_id\": 1,\n  \"title\": \"Finish project report\",\n  \"deadline\": \"2025-06-15T00:00:00.000Z\",\n  \"status\": \"Urgent\",\n  \"completed\": false,\n  \"created_at\": \"2025-01-01T00:00:00.000Z\",\n  \"updated_at\": \"2025-01-01T00:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /api/tasks/:id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated task title\",\n  \"status\": \"Critical\",\n  \"completed\": true\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", "1"],
+              "variable": [
+                { "key": "id", "value": "1", "description": "Task ID" }
+              ]
+            },
+            "description": "Update an existing task. Any subset of fields can be provided."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"task_id\": 1,\n  \"user_id\": 1,\n  \"title\": \"Updated task title\",\n  \"deadline\": \"2025-06-15T00:00:00.000Z\",\n  \"status\": \"Critical\",\n  \"completed\": true,\n  \"created_at\": \"2025-01-01T00:00:00.000Z\",\n  \"updated_at\": \"2025-01-02T00:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /api/tasks/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tasks", "1"],
+              "variable": [
+                { "key": "id", "value": "1", "description": "Task ID" }
+              ]
+            },
+            "description": "Delete a task by its ID."
+          },
+          "response": [
+            {
+              "name": "No Content",
+              "status": "No Content",
+              "code": 204,
+              "header": [],
+              "body": ""
+            }
+          ]
+        }
+      ],
+      "description": "Task CRUD endpoints."
+    },
+    {
+      "name": "Pomodoro",
+      "item": [
+        {
+          "name": "POST /api/pomodoro/start",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"focus_duration\": 25,\n  \"break_duration\": 5\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pomodoro/start",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pomodoro", "start"]
+            },
+            "description": "Start a new Pomodoro cycle.\n\n**Fields:**\n- `focus_duration` — Focus time in minutes (default: `25`)\n- `break_duration` — Break time in minutes (default: `5`)\n\n**Note:** Rejects if the user already has an active (uncompleted) cycle."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"cycle_id\": 1,\n  \"user_id\": 1,\n  \"focus_duration\": 25,\n  \"break_duration\": 5,\n  \"completed_focus_sessions\": 0,\n  \"completed_break\": 0,\n  \"started_at\": \"2025-01-01T10:00:00.000Z\",\n  \"completed_at\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/pomodoro/save",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duration\": 25,\n  \"mode\": \"focus\",\n  \"date\": \"2025-01-01\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pomodoro/save",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pomodoro", "save"]
+            },
+            "description": "Save a completed Pomodoro session directly (creates a pre-completed cycle).\n\n**Fields:**\n- `duration` (required) — Session duration in minutes\n- `mode` (required) — `\"focus\"` or `\"break\"` (if `\"focus\"`, streak is updated)\n- `date` — Session date (defaults to current date)"
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"cycle_id\": 2,\n  \"user_id\": 1,\n  \"duration\": 25,\n  \"mode\": \"focus\",\n  \"completed_at\": \"2025-01-01T10:25:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/pomodoro/focus-complete/:cycleId",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/pomodoro/focus-complete/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pomodoro", "focus-complete", "1"],
+              "variable": [
+                { "key": "cycleId", "value": "1", "description": "PomodoroCycle ID" }
+              ]
+            },
+            "description": "Mark a focus session as complete for a given cycle. Increments `completed_focus_sessions`. If it reaches 4, automatically completes the entire cycle and updates the user's streak."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"cycle_id\": 1,\n  \"user_id\": 1,\n  \"focus_duration\": 25,\n  \"break_duration\": 5,\n  \"completed_focus_sessions\": 1,\n  \"completed_break\": 0,\n  \"started_at\": \"2025-01-01T10:00:00.000Z\",\n  \"completed_at\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/pomodoro/break-complete/:cycleId",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/pomodoro/break-complete/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pomodoro", "break-complete", "1"],
+              "variable": [
+                { "key": "cycleId", "value": "1", "description": "PomodoroCycle ID" }
+              ]
+            },
+            "description": "Mark a break session as complete for a given cycle. Increments `completed_break`."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"cycle_id\": 1,\n  \"user_id\": 1,\n  \"focus_duration\": 25,\n  \"break_duration\": 5,\n  \"completed_focus_sessions\": 1,\n  \"completed_break\": 1,\n  \"started_at\": \"2025-01-01T10:00:00.000Z\",\n  \"completed_at\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/pomodoro/history",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/pomodoro/history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pomodoro", "history"]
+            },
+            "description": "Get all Pomodoro cycle history for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"cycle_id\": 1,\n    \"user_id\": 1,\n    \"focus_duration\": 25,\n    \"break_duration\": 5,\n    \"completed_focus_sessions\": 4,\n    \"completed_break\": 4,\n    \"started_at\": \"2025-01-01T10:00:00.000Z\",\n    \"completed_at\": \"2025-01-01T12:00:00.000Z\"\n  }\n]"
+            }
+          ]
+        }
+      ],
+      "description": "Pomodoro timer cycle management endpoints."
+    },
+    {
+      "name": "Hydration",
+      "item": [
+        {
+          "name": "POST /api/hydration/check-in",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/hydration/check-in",
+              "host": ["{{base_url}}"],
+              "path": ["api", "hydration", "check-in"]
+            },
+            "description": "Log a hydration check-in for today. No request body needed — just authenticates the user."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"log_id\": 1,\n  \"user_id\": 1,\n  \"check_in_time\": \"2025-01-01T12:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/hydration/history",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/hydration/history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "hydration", "history"]
+            },
+            "description": "Get all hydration log entries for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"log_id\": 1,\n    \"user_id\": 1,\n    \"check_in_time\": \"2025-01-01T12:00:00.000Z\"\n  },\n  {\n    \"log_id\": 2,\n    \"user_id\": 1,\n    \"check_in_time\": \"2025-01-01T14:00:00.000Z\"\n  }\n]"
+            }
+          ]
+        }
+      ],
+      "description": "Hydration tracking endpoints — log water check-ins and view history."
+    },
+    {
+      "name": "Coins",
+      "item": [
+        {
+          "name": "GET /api/coins/wallet",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/coins/wallet",
+              "host": ["{{base_url}}"],
+              "path": ["api", "coins", "wallet"]
+            },
+            "description": "Get the authenticated user's coin wallet (balance, etc.)."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"wallet_id\": 1,\n  \"user_id\": 1,\n  \"balance\": 100,\n  \"created_at\": \"2025-01-01T00:00:00.000Z\",\n  \"updated_at\": \"2025-01-01T00:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/coins/transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/coins/transactions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "coins", "transactions"]
+            },
+            "description": "Get all coin transactions for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"transaction_id\": 1,\n    \"wallet_id\": 1,\n    \"amount\": 50,\n    \"type\": \"earned\",\n    \"description\": \"Completed pomodoro session\",\n    \"created_at\": \"2025-01-01T10:00:00.000Z\"\n  },\n  {\n    \"transaction_id\": 2,\n    \"wallet_id\": 1,\n    \"amount\": -30,\n    \"type\": \"spent\",\n    \"description\": \"Bought a seed\",\n    \"created_at\": \"2025-01-01T11:00:00.000Z\"\n  }\n]"
+            }
+          ]
+        }
+      ],
+      "description": "Coin/gamification wallet and transaction endpoints."
+    },
+    {
+      "name": "Flowers",
+      "item": [
+        {
+          "name": "GET /api/flowers/current",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/flowers/current",
+              "host": ["{{base_url}}"],
+              "path": ["api", "flowers", "current"]
+            },
+            "description": "Get the user's currently active (growing) flower."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"flower_id\": 1,\n  \"user_id\": 1,\n  \"seed_id\": 2,\n  \"growth_progress\": 60,\n  \"planted_at\": \"2025-01-01T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/flowers/plant",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seed_id\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/flowers/plant",
+              "host": ["{{base_url}}"],
+              "path": ["api", "flowers", "plant"]
+            },
+            "description": "Plant a seed from the user's inventory to start growing a flower."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"flower_id\": 1,\n  \"user_id\": 1,\n  \"seed_id\": 2,\n  \"growth_progress\": 0,\n  \"planted_at\": \"2025-01-01T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/flowers/store",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/flowers/store",
+              "host": ["{{base_url}}"],
+              "path": ["api", "flowers", "store"]
+            },
+            "description": "Store the current flower's seed back into the user's inventory."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": \"Seed stored in inventory successfully\",\n  \"seedInventory\": {\n    \"inventory_id\": 1,\n    \"user_id\": 1,\n    \"seed_id\": 2,\n    \"quantity\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /api/flowers/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/flowers/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "flowers", "1"],
+              "variable": [
+                { "key": "id", "value": "1", "description": "Flower ID" }
+              ]
+            },
+            "description": "Remove a flower by its ID."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": \"Flower removed successfully\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Flower growing/management endpoints."
+    },
+    {
+      "name": "Garden",
+      "item": [
+        {
+          "name": "GET /api/garden",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/garden/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "garden", ""]
+            },
+            "description": "Get all flowers in the authenticated user's garden."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"garden_flower_id\": 1,\n    \"user_id\": 1,\n    \"seed_id\": 2,\n    \"added_at\": \"2025-01-01T12:00:00.000Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/garden/add",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/garden/add",
+              "host": ["{{base_url}}"],
+              "path": ["api", "garden", "add"]
+            },
+            "description": "Add the user's current flower to their garden. No request body needed."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": \"Flower added to garden successfully.\",\n  \"garden\": [\n    {\n      \"garden_flower_id\": 1,\n      \"user_id\": 1,\n      \"seed_id\": 2,\n      \"added_at\": \"2025-01-01T12:00:00.000Z\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Garden management endpoints."
+    },
+    {
+      "name": "Shop",
+      "item": [
+        {
+          "name": "POST /api/shop/buy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedId\": 2,\n  \"quantity\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/shop/buy",
+              "host": ["{{base_url}}"],
+              "path": ["api", "shop", "buy"]
+            },
+            "description": "Purchase seeds from the shop. Deducts coins from the user's wallet and adds seeds to their inventory."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": \"Purchase successful\",\n  \"seed_id\": 2,\n  \"quantity\": 1,\n  \"total_cost\": 30,\n  \"new_balance\": 70\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Shop/purchase endpoints."
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "GET /api/inventory",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", ""]
+            },
+            "description": "Get all seed inventory entries for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"inventory_id\": 1,\n    \"user_id\": 1,\n    \"seed_id\": 2,\n    \"quantity\": 3\n  },\n  {\n    \"inventory_id\": 2,\n    \"user_id\": 1,\n    \"seed_id\": 3,\n    \"quantity\": 1\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/inventory/:seedId",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "2"],
+              "variable": [
+                { "key": "seedId", "value": "2", "description": "Seed ID" }
+              ]
+            },
+            "description": "Get inventory details for a specific seed owned by the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"inventory_id\": 1,\n  \"user_id\": 1,\n  \"seed_id\": 2,\n  \"quantity\": 3\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Seed inventory management endpoints."
+    },
+    {
+      "name": "Streak",
+      "item": [
+        {
+          "name": "GET /api/streak",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/streak/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "streak", ""]
+            },
+            "description": "Get the authenticated user's streak record (current streak, longest streak, etc.)."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"streak_id\": 1,\n  \"user_id\": 1,\n  \"current_streak\": 5,\n  \"longest_streak\": 10,\n  \"last_activity_date\": \"2025-01-01\",\n  \"updated_at\": \"2025-01-01T00:00:00.000Z\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Streak tracking endpoint."
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "GET /api/admin/users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "users"]
+            },
+            "description": "Get all users with their streak and seed inventory data. **Requires admin role.**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"username\": \"johndoe\",\n    \"email\": \"johndoe@example.com\",\n    \"role\": \"user\",\n    \"current_streak\": 5,\n    \"longest_streak\": 10,\n    \"total_seeds\": 3\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/admin/hydration-logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/hydration-logs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "hydration-logs"]
+            },
+            "description": "Get all hydration logs with associated user info. **Requires admin role.**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"log_id\": 1,\n    \"user_id\": 1,\n    \"check_in_time\": \"2025-01-01T12:00:00.000Z\",\n    \"User\": {\n      \"id\": 1,\n      \"username\": \"johndoe\",\n      \"email\": \"johndoe@example.com\"\n    }\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/admin/seeds",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/seeds",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "seeds"]
+            },
+            "description": "Get all available seeds with their details. **Requires admin role.**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"seed_id\": 1,\n    \"seed_name\": \"Rose\",\n    \"cost\": 30,\n    \"growth_required\": 100,\n    \"image_url\": \"rose.png\"\n  },\n  {\n    \"seed_id\": 2,\n    \"seed_name\": \"Tulip\",\n    \"cost\": 20,\n    \"growth_required\": 80,\n    \"image_url\": \"tulip.png\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/admin/gardens",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/gardens",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "gardens"]
+            },
+            "description": "Get all garden flowers across all users with user and seed info. **Requires admin role.**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "[\n  {\n    \"garden_flower_id\": 1,\n    \"added_at\": \"2025-01-01T12:00:00.000Z\",\n    \"username\": \"johndoe\",\n    \"email\": \"johndoe@example.com\",\n    \"seed_name\": \"Rose\",\n    \"cost\": 30,\n    \"seeds_owned\": 1\n  }\n]"
+            }
+          ]
+        }
+      ],
+      "description": "Admin-only endpoints for managing users, hydration logs, seeds, and gardens."
+    }
+  ]
+}

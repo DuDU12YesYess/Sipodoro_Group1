@@ -66,17 +66,17 @@ export default function AdminDashboard() {
   };
 
   const navItems = [
-    { id: 'Dashboard', label: 'Dashboard', icon: '📊' },
+    // { id: 'Dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'User manage', label: 'User manage', icon: '👥' },
-    { id: 'Pomodoro Sessions', label: 'Pomodoro Sessions', icon: '⏱️' },
+    // { id: 'Pomodoro Sessions', label: 'Pomodoro Sessions', icon: '⏱️' },
     { id: 'Hydration Logs', label: 'Hydration Logs', icon: '💧' },
-    { id: 'Tasks', label: 'Tasks', icon: '📋' },
+    // { id: 'Tasks', label: 'Tasks', icon: '📋' },
     { id: 'Store', label: 'Store', icon: '🛒' }
   ];
 
   return (
     <div className="sipodoro-admin-container">
-      {/* 🎨 GLOBAL BRANDED SCOPED CSS */}
+      {/* GLOBAL BRANDED SCOPED CSS */}
       <style>{`
         .sipodoro-admin-container {
           display: flex;
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
         </header>
 
         {/* ==================== 0. MAIN DASHBOARD VIEW ==================== */}
-        {activeTab === 'Dashboard' && (
+        {/* {activeTab === 'Dashboard' && (
           <div className="sipo-grid-dashboard">
             <div className="sipo-card">
               <h3 className="sipo-card-title">1. User</h3>
@@ -302,7 +302,7 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* ==================== 1. USER MANAGEMENT PAGE ==================== */}
         {activeTab === 'User manage' && (
@@ -329,7 +329,7 @@ export default function AdminDashboard() {
         )}
 
         {/* ==================== 2. POMODORO SESSIONS PAGE ==================== */}
-        {activeTab === 'Pomodoro Sessions' && (
+        {/* {activeTab === 'Pomodoro Sessions' && (
           <div className="sipo-inner-container">
             <div style={{ padding: '16px', background: 'rgba(255,255,255,0.3)', borderBottom: '1px solid #ccc', fontSize: '14px', fontWeight: 'bold', color: '#5F0F1A' }}>
               ⏱️ Real-time Telemetry Monitor Focus Streams
@@ -347,7 +347,7 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
-        )}
+        )} */}
 
         {/* ==================== 3. HYDRATION LOGS PAGE ==================== */}
         {activeTab === 'Hydration Logs' && (
@@ -370,7 +370,7 @@ export default function AdminDashboard() {
         )}
 
         {/* ==================== 4. TASKS MANAGEMENT PAGE ==================== */}
-        {activeTab === 'Tasks' && (
+        {/* {activeTab === 'Tasks' && (
           <div className="sipo-inner-container">
             <form onSubmit={handleAddTask} className="sipo-form-inline">
               <input type="text" placeholder="Task Name description..." className="sipo-input" value={newTask.name} onChange={e => setNewTask({...newTask, name: e.target.value})} />
@@ -395,7 +395,7 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
-        )}
+        )} */}
 
         {/* ==================== 5. STORE MANAGEMENT PAGE ==================== */}
         {activeTab === 'Store' && (

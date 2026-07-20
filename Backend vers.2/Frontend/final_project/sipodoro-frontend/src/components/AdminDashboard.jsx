@@ -135,15 +135,15 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       
       {/* SIDEBAR */}
       <aside style={{ width: '240px', backgroundColor: colors.sidebarBg, padding: '24px 16px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
-        <div style={{ fontSize: '14px', letterSpacing: '2px', fontWeight: 'bold', color: '#FFF', marginBottom: '32px', paddingLeft: '12px' }}>FOCUSAPP</div>
+        <div style={{ fontSize: '14px', letterSpacing: '2px', fontWeight: 'bold', color: '#FFF', marginBottom: '32px', paddingLeft: '12px' }}>SIPODORO</div>
         <nav style={{ flex: 1 }}>
           <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
             {[
-              { id: 'Dashboard', label: 'Dashboard', icon: '📊' },
+              // { id: 'Dashboard', label: 'Dashboard', icon: '📊' },
               { id: 'User manage', label: 'User manage', icon: '👥' },
-              { id: 'Pomodoro Sessions', label: 'Pomodoro Sessions', icon: '⏱️' },
+              // { id: 'Pomodoro Sessions', label: 'Pomodoro Sessions', icon: '⏱️' },
               { id: 'Hydration Logs', label: 'Hydration Logs', icon: '💧' },
-              { id: 'Tasks', label: 'Tasks', icon: '✅' },
+              // { id: 'Tasks', label: 'Tasks', icon: '✅' },
               { id: 'Store', label: 'Store', icon: '🛒' },
               { id: 'Garden', label: 'Garden', icon: '🌱' },
               { id: 'Backup & Recovery', label: 'Backup & Recovery', icon: '💾' }
@@ -169,7 +169,7 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       <main style={{ flex: 1, padding: '40px', boxSizing: 'border-box', overflowY: 'auto' }}>
         
         {/* VIEW 1: DASHBOARD */}
-        {activeTab === 'Dashboard' && (
+        {/* {activeTab === 'Dashboard' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px', maxWidth: '1100px' }}>
             <div style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.borderLight}`, borderRadius: '16px', padding: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}><span style={{ fontWeight: 'bold' }}><span style={{ color: colors.accentRed }}>01</span> User</span><span>👥</span></div>
@@ -180,7 +180,7 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
               <div style={{ height: '70px', width: '8px', backgroundColor: '#EAA49E', borderRadius: '4px', margin: '0 auto' }} />
             </div>
           </div>
-        )}
+        )} */}
 
         {/* VIEW 2: USER MANAGEMENT */}
         {activeTab === 'User manage' && (
@@ -216,7 +216,7 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
         )}
 
         {/* VIEW 3: POMODORO */}
-        {activeTab === 'Pomodoro Sessions' && (
+        {/* {activeTab === 'Pomodoro Sessions' && (
           <div style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.borderLight}`, borderRadius: '16px', padding: '32px' }}>
             <h3>Pomodoro Timer</h3>
             <div style={{ fontSize: '48px', margin: '20px 0' }}>{formatTime(timeLeft)}</div>
@@ -224,7 +224,7 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
               {isTimerRunning ? 'Pause' : 'Start'}
             </button>
           </div>
-        )}
+        )} */}
 
         {/* VIEW 4: HYDRATION */}
         {activeTab === 'Hydration Logs' && (
@@ -264,12 +264,12 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
         )}
 
         {/* VIEW 5: TASKS */}
-        {activeTab === 'Tasks' && (
+        {/* {activeTab === 'Tasks' && (
           <div style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.borderLight}`, borderRadius: '16px', padding: '24px' }}>
             <h3>Tasks List</h3>
             {tasks.map(t => <div key={t.id}>{t.text} - {t.status}</div>)}
           </div>
-        )}
+        )} */}
 
         {/* VIEW 6: STORE */}
         {activeTab === 'Store' && (

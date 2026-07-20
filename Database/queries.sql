@@ -31,9 +31,24 @@ JOIN Streak_Record s ON u.user_id = s.user_id
 ORDER BY s.current_streak DESC;
 
 use defaultdb;
+<<<<<<< HEAD
 SELECT * FROM User WHERE email = 'dyna023@gmail.com';
 select * from Task;
 select * from Admin;
+=======
+show tables;
+SELECT * FROM Users WHERE email = 'dyna023@gmail.com';
+select * from Task;
+select * from Users;
+select * from Pomodoro_Cycle;
+
+SELECT cycle_id, completed_at
+FROM Pomodoro_Cycle
+WHERE completed_at IS NULL;
+
+DELETE FROM Pomodoro_Cycle
+WHERE cycle_id = 3;
+>>>>>>> 501e2df8055e715ee49cbc23f696d06402e1b739
 
 -- total coin 
 SELECT

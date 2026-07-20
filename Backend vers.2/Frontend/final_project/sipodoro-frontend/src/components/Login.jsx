@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { login } from "../api/authApi";
+import home_page from '../assets/Logo/Sipodoro.png'
 
 export default function Login({ onNavigate, setIsLoggedIn, setUsername, setRole }) {
   const [emailOrUser, setEmailOrUser] = useState('');
@@ -56,7 +57,7 @@ export default function Login({ onNavigate, setIsLoggedIn, setUsername, setRole 
 
   return (
     <div style={{
-      fontFamily: '"Comic Sans MS", "Chalkboard SE", Arial, sans-serif',
+      fontFamily:'Poppins_Regular',
       backgroundColor: colors.bgLight,
       minHeight: '100vh',
       display: 'flex',
@@ -69,7 +70,7 @@ export default function Login({ onNavigate, setIsLoggedIn, setUsername, setRole 
 
       <header style={{ textAlign: 'center', marginBottom: '24px' }}>
         <h1 style={{
-          fontSize: '56px', fontWeight: '900', color: colors.textDark,
+          fontSize: '80px',fontFamily: 'Hello_Notie',color: colors.textDark,
           margin: '0 0 12px 0', position: 'relative', display: 'inline-block',
         }}>
           WELCOME BACK
@@ -79,18 +80,8 @@ export default function Login({ onNavigate, setIsLoggedIn, setUsername, setRole 
         </p>
       </header>
 
-      <div style={{
-        width: '210px', height: '160px', backgroundColor: colors.tomatoRed,
-        borderRadius: '50% 50% 46% 46%', position: 'relative',
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        marginBottom: '40px', boxShadow: 'inset -12px -12px 0px rgba(0,0,0,0.08)',
-      }}>
-        <div style={{ position: 'absolute', top: '-18px', fontSize: '38px', transform: 'rotate(-5deg)' }}>🍃</div>
-        <div style={{ display: 'flex', gap: '36px', transform: 'translateY(12px)' }}>
-          <div style={{ width: '10px', height: '16px', backgroundColor: '#000', borderRadius: '50%' }} />
-          <div style={{ width: '18px', height: '10px', borderBottom: '4px solid #000', borderRadius: '0 0 12px 12px' }} />
-          <div style={{ width: '10px', height: '16px', backgroundColor: '#000', borderRadius: '50%' }} />
-        </div>
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+        <img src={home_page} alt="Sipodoro Mascot" style={{ width: '300px', height: 'auto', objectFit: 'contain' }} />
       </div>
 
       <form
@@ -134,7 +125,7 @@ export default function Login({ onNavigate, setIsLoggedIn, setUsername, setRole 
             backgroundColor: colors.btnYellow, color: colors.textDark,
             border: 'none', borderRadius: '28px', width: '220px', height: '54px',
             fontSize: '26px', fontWeight: 'bold', cursor: 'pointer',
-            fontFamily: 'inherit', marginTop: '16px',
+            fontFamily:'Poppins_Bold', marginTop: '16px',
             boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
           }}
         >

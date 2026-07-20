@@ -39,7 +39,7 @@ export default function Home({ onNavigate, isLoggedIn, username, onLogout }) {
         </div>
 
         {/* Center links */}
-        <div style={{ fontFamily:'Poppins_Regular',display: 'flex', gap: '32px', alignItems: 'center' }}>
+        <div style={{ fontFamily:'Poppins_Regular',display: 'flex', gap: '32px', alignItems: 'center' , color: 'black'}}>
           <button onClick={() => onNavigate && onNavigate('home')}     style={{ ...navButtonStyle, fontFamily: 'Poppins_Bold' }}>Home</button>
           <button onClick={() => onNavigate && onNavigate('about')}    style={navButtonStyle}>About us</button>
           <button onClick={() => onNavigate && onNavigate('tasks')}    style={navButtonStyle}>Task</button>

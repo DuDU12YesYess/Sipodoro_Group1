@@ -149,9 +149,12 @@ export default function App() {
         <AdminDashboard onNavigate={handleNavigate} {...authProps} />
       )}
 
-      {(view === 'pomodoro' || view === 'timer') && (
-        <Timer onNavigate={handleNavigate} {...authProps} {...timerProps} />
-      )}
+      <Timer
+        onNavigate={handleNavigate}
+        {...authProps}
+        {...timerProps}
+        visible={view === 'pomodoro' || view === 'timer'}
+      />
 
       {view === 'tasks' && <Tasks onNavigate={handleNavigate} {...authProps} />}
 

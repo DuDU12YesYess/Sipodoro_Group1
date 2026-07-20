@@ -26,7 +26,7 @@ import redBudImg from '../assets/image/red_2.svg';
 import redFlowerImg from '../assets/image/red_3.svg';
 import logoImg from '../assets/image/logo.jpg';
 
-const COOLDOWN_SECONDS = 60;
+const COOLDOWN_SECONDS = 3;
 
 const seedIdMap = { 'Pink': 1, 'Purple': 2, 'Navy': 3, 'Blue': 4, 'Yellow': 5, 'Red': 6 };
 
@@ -217,7 +217,7 @@ export default function Hydration({ onNavigate, onAddFlower, isLoggedIn = false,
   const isInCooldown = cooldownLeft > 0;
 
   return (
-    <div style={{ fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif', backgroundColor: colors.bgLight, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ fontFamily: 'Hello_Notie', backgroundColor: colors.bgLight, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <style>{`
         @keyframes windSway { 0% { transform: rotate(0deg); } 50% { transform: rotate(2.5deg) translateX(1px); } 100% { transform: rotate(0deg); } }
         @keyframes bloomExpansion { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
@@ -229,10 +229,15 @@ export default function Hydration({ onNavigate, onAddFlower, isLoggedIn = false,
 
       <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 60px' }}>
         <img src={logoImg} alt="Logo" style={{ height: '40px', cursor: 'pointer' }} onClick={() => onNavigate('home')} />
-        <div style={{ display: 'flex', gap: '32px' }}>
-          {['Home', 'About', 'Tasks', 'Timer', 'Hydration', 'Garden'].map(label => (
-            <button key={label} onClick={() => onNavigate(label.toLowerCase())} style={navButtonStyle}>{label}</button>
-          ))}
+        {/* Center links */}
+        <div style={{ fontFamily:'Poppins_Regular',display: 'flex', gap: '32px', alignItems: 'center' }}>
+          <button onClick={() => onNavigate && onNavigate('home')}     style={navButtonStyle}>Home</button>
+          <button onClick={() => onNavigate && onNavigate('about')}    style={navButtonStyle}>About us</button>
+          <button onClick={() => onNavigate && onNavigate('tasks')}    style={navButtonStyle}>Task</button>
+          <button onClick={() => onNavigate && onNavigate('timer')}    style={navButtonStyle}>Pomodoro</button>
+          <button onClick={() => onNavigate && onNavigate('hydration')}   style={{ ...navButtonStyle, fontFamily: 'Poppins_Bold' }}>Hydration</button>
+          <button onClick={() => onNavigate && onNavigate('garden')}   style={navButtonStyle}>Garden</button>
+        
         </div>
         <div>{isLoggedIn ? <button onClick={onLogout}>Logout</button> : <span onClick={() => onNavigate('login')} style={{cursor:'pointer', fontWeight:'bold', color:colors.accentRed}}>Signup / Login</span>}</div>
       </nav>
@@ -240,7 +245,7 @@ export default function Hydration({ onNavigate, onAddFlower, isLoggedIn = false,
       <main style={{ display: 'flex', padding: '40px 60px', maxWidth: '1400px', width: '100%', margin: '0 auto', gap: '50px' }}>
         <section style={{ backgroundColor: colors.shopPanel, borderRadius: '24px', width: '480px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div>
-            <h2 style={{ fontSize: '36px', fontWeight: '900', color: colors.textDark, textAlign: 'center', marginBottom: '16px' }}>Flora Shop</h2>
+            <h2 style={{ fontSize: '36px', fontFamily: 'Hello_Notie', color: colors.textDark, textAlign: 'center', marginBottom: '16px' }}>Flora Shop</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
               {shopItems.map((item) => {
                 const owned = inventory[item.id] || 0;
@@ -263,7 +268,7 @@ export default function Hydration({ onNavigate, onAddFlower, isLoggedIn = false,
           </div>
 
           <div style={{ borderTop: '2px dashed #C8C87A', paddingTop: '20px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: '900', color: colors.textDark, textAlign: 'center', marginBottom: '12px' }}>My Seeds</h2>
+            <h2 style={{ fontSize: '24px', fontFamily: 'Hello_Notie', color: colors.textDark, textAlign: 'center', marginBottom: '12px' }}>My Seeds</h2>
             {ownedSeeds.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#888', fontSize: '14px', fontStyle: 'italic' }}>No seeds yet. Buy some from the shop!</p>
             ) : (
@@ -288,7 +293,7 @@ export default function Hydration({ onNavigate, onAddFlower, isLoggedIn = false,
 
         <section style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ textAlign: 'right', width: '100%' }}>
-            <div>{streak} day streak | {coins} coins</div>
+            <div>{streak} streak | {coins} coins</div>
             {ownedSeeds.length > 0 && <div style={{ color: '#BD6B2A', fontWeight: 'bold' }}>Seeds: {ownedSeeds.reduce((sum, item) => sum + inventory[item.id], 0)}</div>}
           </div>
           <h1 style={{ fontSize: '38px', fontWeight: '900', margin: '20px 0' }}>{stageName}</h1>
@@ -332,7 +337,7 @@ export default function Hydration({ onNavigate, onAddFlower, isLoggedIn = false,
                 {isInCooldown ? `Wait ${formatCooldown(cooldownLeft)}` : "Check in +1"}
               </button>
               {isInCooldown && (
-                <p style={{ marginTop: '10px', fontSize: '14px', color: '#888' }}>Next check-in in {formatCooldown(cooldownLeft)}</p>
+                <p style={{ fontFamily: 'Hello_Notie', marginTop: '10px', fontSize: '14px', color: '#888' }}>Next check-in in {formatCooldown(cooldownLeft)}</p>
               )}
             </>
           )}

@@ -1,6 +1,5 @@
 ﻿const PomodoroRepository = require ('../repository/pomodoroRepository')
 const StreakService = require ('../services/streakService')
-const coinService = require('./coinService')
 
 const getExistingCycle = async (cycleId)=>{
     const cycle = await PomodoroRepository.getCycleById(cycleId)
@@ -36,13 +35,10 @@ const startCycle = async (userId, settings)=>{
 }
 
 const completeFocusSession = async (cycleId)=>{
-    const cycle = await getExistingCycle(cycleId);
 
+    await getExistingCycle(cycleId);
     const updateCycle = await PomodoroRepository.incrementFocusSession(cycleId)
-
-    await StreakService.updateStreak(cycle.user_id)
-
-    if (updateCycle.completed_focus_sessions === 4){
+    if (updateCycle.completed_focus_sessions === 1){
         return await completeCycle(cycleId)
     }else{
         return updateCycle
@@ -63,7 +59,6 @@ const completeCycle = async (cycleId)=>{
       completed_at : new Date(),
       streak_earned : 1
     })
-
     await StreakService.updateStreak(cycle.user_id)
 
     return completedCycle
